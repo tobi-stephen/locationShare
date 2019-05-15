@@ -33,17 +33,7 @@ class DefaultMarkers extends React.Component {
         super(props);
 
         this.state = {
-            region: [{
-                latitude: LATITUDE,
-                longitude: LONGITUDE,
-                latitudeDelta: LATITUDE_DELTA,
-                longitudeDelta: LONGITUDE_DELTA,
-            }, {
-                latitude: LATITUDE,
-                longitude: LONGITUDE,
-                latitudeDelta: LATITUDE_DELTA,
-                longitudeDelta: LONGITUDE_DELTA,
-            }],
+            region: [],
             regionP1: {
                 latitude: LATITUDE + 0.5,
                 longitude: LONGITUDE - 0.2,
