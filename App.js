@@ -33,12 +33,17 @@ class DefaultMarkers extends React.Component {
         super(props);
 
         this.state = {
-            region: {
+            region: [{
                 latitude: LATITUDE,
                 longitude: LONGITUDE,
                 latitudeDelta: LATITUDE_DELTA,
                 longitudeDelta: LONGITUDE_DELTA,
-            },
+            }, {
+                latitude: LATITUDE,
+                longitude: LONGITUDE,
+                latitudeDelta: LATITUDE_DELTA,
+                longitudeDelta: LONGITUDE_DELTA,
+            }],
             regionP1: {
                 latitude: LATITUDE + 0.5,
                 longitude: LONGITUDE - 0.2,
@@ -62,7 +67,7 @@ class DefaultMarkers extends React.Component {
         });
     }
 
-    myLocation = async () => {
+    myLocation = async (val) => {
         try {
             const granted = await PermissionsAndroid.request(
                 PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
@@ -84,8 +89,8 @@ class DefaultMarkers extends React.Component {
                             longitudeDelta: LONGITUDE_DELTA,
                         }
                         let regionP1 = {
-                            latitude: region.latitude + 0.5,
-                            longitude: region.longitude - 0.2,
+                            latitude: region.latitude + Math.random(),
+                            longitude: region.longitude - Math.random(),
                             latitudeDelta: LATITUDE_DELTA,
                             longitudeDelta: LONGITUDE_DELTA,
                         }
@@ -95,7 +100,15 @@ class DefaultMarkers extends React.Component {
                         //     .then((respJson) => {
                         //         alert(JSON.stringify(respJson))
                         //     })
-                        this.setState({ region, regionP1 })
+                        let reg = this.state.region
+                        if (val == 0){
+                            reg[0] = region
+                        } else if (val == 1) {
+                            reg[1] = regionP1
+                        } else {
+                            reg[2] = regionP1
+                        }
+                        this.setState({ region: reg })
                     },
                     (error) => this.setState({ error: error.message }),
                     // { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
@@ -123,8 +136,8 @@ class DefaultMarkers extends React.Component {
                         <MapView
                             provider={this.props.provider}
                             style={styles.map}
-                            initialRegion={this.state.region}
-                            region={this.state.region}
+                            initialRegion={this.state.region[0]}
+                            region={this.state.region[0]}
                             showsMyLocationButton={true}
                             liteMode={false}
                             mapType={'standard'}
@@ -140,13 +153,13 @@ class DefaultMarkers extends React.Component {
                         </MapView>
                         <View style={styles.buttonContainer}>
                             <TouchableOpacity
-                                onPress={() => this.myLocation()}
+                                onPress={() => this.myLocation(0)}
                                 style={styles.bubble}
                             >
                                 <Text>Find my location</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
-                                onPress={() => alert(JSON.stringify(this.state.region))}
+                                onPress={() => alert(JSON.stringify(this.state.region[0]))}
                                 style={styles.bubble}
                             >
                                 <Text>My LongLat</Text>
@@ -157,8 +170,8 @@ class DefaultMarkers extends React.Component {
                         <MapView
                             provider={this.props.provider}
                             style={styles.map}
-                            initialRegion={this.state.region}
-                            region={this.state.regionP1}
+                            initialRegion={this.state.region[1]}
+                            region={this.state.region[1]}
                             showsMyLocationButton={true}
                             liteMode={false}
                             mapType={'standard'}
@@ -174,16 +187,50 @@ class DefaultMarkers extends React.Component {
                         </MapView>
                         <View style={styles.buttonContainer}>
                             <TouchableOpacity
-                                onPress={() => this.myLocation()}
+                                onPress={() => this.myLocation(1)}
                                 style={styles.bubble}
                             >
                                 <Text>Person1 Location</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
-                                onPress={() => alert(JSON.stringify(this.state.regionP1))}
+                                onPress={() => alert(JSON.stringify(this.state.region[1]))}
                                 style={styles.bubble}
                             >
                                 <Text>Person1 LongLat</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </Card>
+                    <Card styles={StyleSheet.absoluteFillObject}>
+                        <MapView
+                            provider={this.props.provider}
+                            style={styles.map}
+                            initialRegion={this.state.region[2]}
+                            region={this.state.region[2]}
+                            showsMyLocationButton={true}
+                            liteMode={false}
+                            mapType={'standard'}
+                            onPress={(e) => this.onMapPress(e)}
+                        >
+                            {this.state.markers.map(marker => (
+                                <Marker
+                                    key={marker.key}
+                                    coordinate={marker.coordinate}
+                                    pinColor={marker.color}
+                                />
+                            ))}
+                        </MapView>
+                        <View style={styles.buttonContainer}>
+                            <TouchableOpacity
+                                onPress={() => this.myLocation(2)}
+                                style={styles.bubble}
+                            >
+                                <Text>Person2 Location</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={() => alert(JSON.stringify(this.state.region[2]))}
+                                style={styles.bubble}
+                            >
+                                <Text>Person2 LongLat</Text>
                             </TouchableOpacity>
                         </View>
                     </Card>
