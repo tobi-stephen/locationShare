@@ -3,6 +3,7 @@ package com.mapp;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.surialabs.rn.geofencing.GeoFencingPackage;
 import com.agontuk.RNFusedLocation.RNFusedLocationPackage;
 import com.airbnb.android.react.maps.MapsPackage;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
@@ -26,6 +27,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new GeoFencingPackage(),
             new RNFusedLocationPackage(),
             new MapsPackage(),
             new RNGestureHandlerPackage()
