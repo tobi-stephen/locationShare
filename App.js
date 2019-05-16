@@ -114,7 +114,7 @@ class DefaultMarkers extends React.Component {
     //     }
     // }
 
-    setGeofence = async () => {
+    setGeofence = async (offset) => {
         try {
             const granted = await PermissionsAndroid.request(
                 PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
@@ -138,7 +138,6 @@ class DefaultMarkers extends React.Component {
 
                         let lat = position.coords.latitude
                         let lng = position.coords.longitude
-                        const offset = 0.008
                         const polygon = [
                             { lat: lat - offset, lng: lng - offset },
                             { lat: lat + offset, lng: lng - offset },
@@ -164,7 +163,7 @@ class DefaultMarkers extends React.Component {
                             lat: position.coords.latitude,
                             lng: position.coords.longitude
                         };
-                        this.setState({ geofence: true, track, coordinates, polygon })
+                        this.setState({ geofence: true, track, coordinate, coordinates, polygon })
                     },
                     (error) => this.setState({ error: error.message }),
                     { enableHighAccuracy: true },
@@ -200,8 +199,6 @@ class DefaultMarkers extends React.Component {
                             longitudeDelta: LONGITUDE_DELTA,
                         }
 
-                        let offset = 0.008
-
                         let point = {
                             lat: position.coords.latitude,
                             lng: position.coords.longitude
@@ -214,9 +211,10 @@ class DefaultMarkers extends React.Component {
 
                         this.setState({ track, coordinate, point })
 
-                        // GeoFencing.containsLocation(point, this.state.polygon)
-                        // .then(() => alert('user is within geofence'))
-                        // .catch(() => alert('user is NOT within geofence'))
+                        if (this.state.geofence)
+                        GeoFencing.containsLocation(point, this.state.polygon)
+                        .then(() => alert('user is within geofence'))
+                        .catch(() => alert('user is NOT within geofence'))
                     },
                     (error) => this.setState({ error: error.message }),
                     { enableHighAccuracy: true, interval: 10000, fastestInterval: 5000, distanceFilter: 1, },
@@ -264,10 +262,17 @@ class DefaultMarkers extends React.Component {
                 </MapView>
                 <View style={{ ...styles.buttonContainer, }}>
                     <TouchableOpacity
-                        onPress={() => this.setGeofence()}
+                        onPress={() => this.setGeofence(0.0001)}
                         style={styles.bubble}
                     >
                         <Text style={styles.button}>Set Geofence</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        onPress={() => this.setGeofence(0.008)}
+                        style={styles.bubble}
+                    >
+                        <Text style={styles.button}>Set Larger Geofence</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity
@@ -320,8 +325,8 @@ const styles = StyleSheet.create({
         marginHorizontal: 10,
     },
     buttonContainer: {
-        flexDirection: 'row',
-        justifyContent: 'flex-end',
+        flexDirection: 'column',
+        // justifyContent: 'flex-end',
 
         marginVertical: 20,
         backgroundColor: 'transparent',
